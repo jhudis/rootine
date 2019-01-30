@@ -22,11 +22,11 @@ public class AddTask extends AppCompatActivity {
         Routine.Task task = intent.getParcelableExtra(getString(R.string.task_extra));
 
         if (task == null) {
-            //Don't allow user to delete task (they can just press back)
+            //Don't allow user to delete list_item (they can just press back)
             Button deleteButton = findViewById(R.id.delete_task);
             deleteButton.setVisibility(View.GONE);
 
-            //The rest of this method is loading properties of a pre-existing task
+            //The rest of this method is loading properties of a pre-existing list_item
             return;
         }
 

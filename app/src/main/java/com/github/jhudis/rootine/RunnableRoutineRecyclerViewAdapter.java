@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.jhudis.rootine.RoutineFragment.OnListFragmentInteractionListener;
+import com.github.jhudis.rootine.RunnableRoutineFragment.OnListFragmentInteractionListener;
+import com.github.jhudis.rootine.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
@@ -14,20 +15,20 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a {@link Routine} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class RoutineRecyclerViewAdapter extends RecyclerView.Adapter<RoutineRecyclerViewAdapter.ViewHolder> {
+public class RunnableRoutineRecyclerViewAdapter extends RecyclerView.Adapter<RunnableRoutineRecyclerViewAdapter.ViewHolder> {
 
     private final List<Routine> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public RoutineRecyclerViewAdapter(List<Routine> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public RunnableRoutineRecyclerViewAdapter(List<Routine> routines, OnListFragmentInteractionListener listener) {
+        mValues = routines;
         mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_routine, parent, false);
+                .inflate(R.layout.fragment_runnableroutine, parent, false);
         return new ViewHolder(view);
     }
 
@@ -36,8 +37,6 @@ public class RoutineRecyclerViewAdapter extends RecyclerView.Adapter<RoutineRecy
         Routine routine = mValues.get(position);
         holder.mRoutine = routine;
         holder.mNameView.setText(routine.getName());
-        holder.mDaysActiveView.setText(routine.getDaysActiveAsString());
-        holder.mStartTimeView.setText(routine.getStartTimeAsString());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,16 +58,12 @@ public class RoutineRecyclerViewAdapter extends RecyclerView.Adapter<RoutineRecy
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNameView;
-        public final TextView mDaysActiveView;
-        public final TextView mStartTimeView;
         public Routine mRoutine;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mNameView = view.findViewById(R.id.name);
-            mDaysActiveView = view.findViewById(R.id.days_active);
-            mStartTimeView = view.findViewById(R.id.start_time);
         }
 
         @Override

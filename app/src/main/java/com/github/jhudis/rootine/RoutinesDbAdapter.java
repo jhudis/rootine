@@ -17,7 +17,6 @@ public class RoutinesDbAdapter {
     public static final String KEY_NAME = "name";
     public static final String KEY_DAYS_ACTIVE = "days_active";
     public static final String KEY_START_TIME = "start_time";
-    public static final String KEY_PRIORITY = "priority";
     public static final String KEY_TASKS = "tasks";
     public static final String KEY_LAST_RUN = "last_run";
     public static final String KEY_ROWID = "_id";
@@ -31,11 +30,11 @@ public class RoutinesDbAdapter {
      */
     private static final String DATABASE_CREATE =
             "create table routines (_id integer primary key autoincrement, "
-                    + "name text not null, days_active integer, start_time integer, priority integer, tasks text not null, last_run integer);";
+                    + "name text not null, days_active integer, start_time integer, tasks text not null, last_run integer);";
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "routines";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private final Context mCtx;
 
@@ -91,24 +90,22 @@ public class RoutinesDbAdapter {
 
 
     /**
-     * Create a new routine using the name, days active, start time, priority, tasks, and last run date provided.
+     * Create a new routine using the name, days active, start time, tasks, and last run date provided.
      * If the routine is successfully created return the new rowId for that routine, otherwise return
      * a -1 to indicate failure.
      *
      * @param name the name of the routine
      * @param daysActive the days for which the routine is active, as an integer
      * @param startTime the start time of the routine, as an integer
-     * @param priority the priority of the routine
      * @param tasks the tasks of the routine
      * @param lastRun the date when this routine was last run
      * @return rowId or -1 if failed
      */
-    public long createRoutine(String name, int daysActive, int startTime, int priority, String tasks, int lastRun) {
+    public long createRoutine(String name, int daysActive, int startTime, String tasks, int lastRun) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_NAME, name);
         initialValues.put(KEY_DAYS_ACTIVE, daysActive);
         initialValues.put(KEY_START_TIME, startTime);
-        initialValues.put(KEY_PRIORITY, priority);
         initialValues.put(KEY_TASKS, tasks);
         initialValues.put(KEY_LAST_RUN, lastRun);
 
@@ -116,7 +113,7 @@ public class RoutinesDbAdapter {
     }
 
     /**
-     * Create a new routine using the name, days active, start time, priority, tasks, and last run date from the
+     * Create a new routine using the name, days active, start time, tasks, and last run date from the
      * routine provided. If the routine is successfully created return the new rowId for that
      * routine, otherwise return a -1 to indicate failure.
      *
@@ -128,7 +125,6 @@ public class RoutinesDbAdapter {
                 routine.getName(),
                 routine.getDaysActiveAsInt(),
                 routine.getStartTimeAsInt(),
-                routine.getPriority(),
                 routine.getTasksAsString(),
                 routine.getDateLastRunAsInt());
     }
@@ -151,7 +147,7 @@ public class RoutinesDbAdapter {
      */
     public Cursor fetchAllRoutines() {
 
-        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NAME, KEY_DAYS_ACTIVE, KEY_START_TIME, KEY_PRIORITY, KEY_TASKS, KEY_LAST_RUN},
+        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NAME, KEY_DAYS_ACTIVE, KEY_START_TIME, KEY_TASKS, KEY_LAST_RUN},
                 null, null, null, null, null);
     }
 
@@ -171,16 +167,15 @@ public class RoutinesDbAdapter {
     }
 
     /**
-     * Get each untimed routine which can be run today, in order from greatest to least priority
+     * Get each untimed routine which can be run today
      * @return a list of all runnable routines
      */
-    public List<Routine> getRunnableRoutinesInOrder() {
+    public List<Routine> getRunnableRoutines() {
         List<Routine> ret = new ArrayList<>();
         List<Routine> routines = getAllRoutines();
         for (Routine routine : routines)
             if (routine.getStartTime() == null && routine.isRunnableToday())
                 ret.add(routine);
-        Collections.sort(ret);
         return ret;
     }
 
@@ -188,7 +183,7 @@ public class RoutinesDbAdapter {
      * @return the untimed routine next in line to be run
      */
     public Routine getNextRunnableRoutine() {
-        List<Routine> routines = getRunnableRoutinesInOrder();
+        List<Routine> routines = getRunnableRoutines();
         if (routines.size() == 0) return null;
         return routines.get(0);
     }
@@ -204,7 +199,7 @@ public class RoutinesDbAdapter {
 
         Cursor mCursor =
 
-                mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NAME, KEY_DAYS_ACTIVE, KEY_START_TIME, KEY_PRIORITY, KEY_TASKS, KEY_LAST_RUN},
+                mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NAME, KEY_DAYS_ACTIVE, KEY_START_TIME, KEY_TASKS, KEY_LAST_RUN},
                         KEY_ROWID + "=" + rowId, null,
                         null, null, null, null);
         if (mCursor != null) {
@@ -224,7 +219,6 @@ public class RoutinesDbAdapter {
         return new Routine(c.getString(c.getColumnIndex(KEY_NAME)),
                            c.getInt   (c.getColumnIndex(KEY_DAYS_ACTIVE)),
                            c.getInt   (c.getColumnIndex(KEY_START_TIME)),
-                           c.getInt   (c.getColumnIndex(KEY_PRIORITY)),
                            c.getString(c.getColumnIndex(KEY_TASKS)),
                            c.getInt   (c.getColumnIndex(KEY_LAST_RUN)),
                            c.getInt   (c.getColumnIndex(KEY_ROWID)));
@@ -233,23 +227,21 @@ public class RoutinesDbAdapter {
     /**
      * Update the routine using the details provided. The routine to be updated is
      * specified using the rowId, and it is altered to use the name, days active, start time,
-     * priority, tasks, and lastRun values passed in. Last run date will not update if given value is -1
+     * tasks, and lastRun values passed in. Last run date will not update if given value is -1
      *
      * @param rowId id of routine to update
      * @param name value to set routine name to
      * @param daysActive value to set routine days active to
      * @param startTime value to set routine start time to
-     * @param priority value to set routine priority to
      * @param tasks value to set routine tasks to
      * @param lastRun value to set routine last run date to
      * @return true if the routine was successfully updated, false otherwise
      */
-    public boolean updateRoutine(long rowId, String name, int daysActive, int startTime, int priority, String tasks, int lastRun) {
+    public boolean updateRoutine(long rowId, String name, int daysActive, int startTime, String tasks, int lastRun) {
         ContentValues args = new ContentValues();
         args.put(KEY_NAME, name);
         args.put(KEY_DAYS_ACTIVE, daysActive);
         args.put(KEY_START_TIME, startTime);
-        args.put(KEY_PRIORITY, priority);
         args.put(KEY_TASKS, tasks);
         if (lastRun != -1)
             args.put(KEY_LAST_RUN, lastRun);
@@ -260,7 +252,7 @@ public class RoutinesDbAdapter {
     /**
      * Update the routine using the a constructed routine. The routine to be updated is
      * specified using the rowId, and it is altered to use the name, days active, start time,
-     * priority, tasks, and last run date values of the routine passed in
+     * tasks, and last run date values of the routine passed in
      *
      * @param rowId id of routine to update
      * @param routine the routine to take the new values from
@@ -272,7 +264,6 @@ public class RoutinesDbAdapter {
                 routine.getName(),
                 routine.getDaysActiveAsInt(),
                 routine.getStartTimeAsInt(),
-                routine.getPriority(),
                 routine.getTasksAsString(),
                 routine.getDateLastRunAsInt());
     }

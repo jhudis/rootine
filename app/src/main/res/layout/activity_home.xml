@@ -10,41 +10,61 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/run_routine_button"
+        <TextView
+            android:id="@+id/run_routine_instruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="0"
+            android:background="@android:color/background_light"
+            android:padding="8dp"
+            android:text="@string/run_routine_instruction"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="137dp"
+            tools:layout_editor_absoluteY="8dp" />
+
+        <TextView
+            android:id="@+id/no_runnable_routines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
             android:layout_weight="1"
-            android:onClick="runNextRoutine"
-            android:padding="24dp"
-            android:text="@string/run_next_routine"
-            android:textAllCaps="false"
-            android:textSize="36sp"
-            tools:layout_editor_absoluteX="179dp"
-            tools:layout_editor_absoluteY="43dp" />
+            android:text="@string/no_runnable_routines"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+
+        <fragment
+            android:id="@+id/routine_list"
+            android:name="com.github.jhudis.rootine.RunnableRoutineFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="12dp"
             android:background="@color/colorDivider" />
 
         <Button
             android:id="@+id/manage_routines_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="10dp"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:onClick="manageRoutines"
             android:padding="24dp"
             android:text="@string/manage_routines"

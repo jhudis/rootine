@@ -163,37 +163,12 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/start_time_label"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/priority_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/priority"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/priority"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/start_time" />
-
-    <EditText
-        android:id="@+id/priority"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:inputType="number"
-        android:maxLength="1"
-        android:text="@string/default_priority"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/priority_label" />
-
     <Button
         android:id="@+id/add_task"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:onClick="addTask"
         android:text="@string/add_task"
@@ -201,7 +176,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/priority_label" />
+        app:layout_constraintTop_toBottomOf="@+id/start_time" />
 
     <fragment
         android:id="@+id/task_list"

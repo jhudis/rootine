@@ -49,7 +49,7 @@ public class RoutineService extends IntentService {
 
         //Text-to-speech needs some time to start up
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

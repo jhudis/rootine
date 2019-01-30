@@ -12,13 +12,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Routine implements Comparable<Routine> {
+public class Routine {
 
     private String name;
     private boolean[] daysActive; //Index 0 is Sunday, 6 is Saturday
     private Time startTime; //When referring to "untimed" routines, this indicates the routine has no set start time
                             //i.e. it's run when the user clicks the run button on Home screen on an active day
-    private int priority; //For routines which appear on the same day, 0 goes first, 9 last
     private List<Task> tasks;
     private Date lastRun; //For keeping track of which untimed routines can be run at the moment
     private int id;
@@ -29,24 +28,22 @@ public class Routine implements Comparable<Routine> {
 
     private static final String[] DAYS = {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
 
-    public Routine(String name, boolean[] daysActive, Time startTime, int priority, List<Task> tasks) {
+    public Routine(String name, boolean[] daysActive, Time startTime, List<Task> tasks) {
         this.name = name;
         this.daysActive = daysActive;
         this.startTime = startTime;
-        this.priority = priority;
         this.tasks = tasks;
     }
 
-    public Routine(String name, int daysActive, int startTime, int priority, String tasks) {
+    public Routine(String name, int daysActive, int startTime, String tasks) {
         this(name,
              convertIntToDaysActive(daysActive),
              startTime == -1 ? null : new Time(startTime),
-             priority,
              convertStringToTasks(tasks));
     }
 
-    public Routine(String name, int daysActive, int startTime, int priority, String tasks, int lastRun, int id) {
-        this(name, daysActive, startTime, priority, tasks);
+    public Routine(String name, int daysActive, int startTime, String tasks, int lastRun, int id) {
+        this(name, daysActive, startTime, tasks);
         this.lastRun = lastRun == -1 ? null : new Date(lastRun);
         this.id = id;
     }
@@ -116,11 +113,6 @@ public class Routine implements Comparable<Routine> {
         return ret.length() == 0 ? "No Active Days" : ret.substring(0, ret.length() - 2);
     }
 
-    public String getStartTimeOrPriority() {
-        //For displaying in ManageRoutines
-        return startTime == null ? "Priority: " + priority : startTime.toString12Hr();
-    }
-
     public int getStartTimeAsInt() {
         //For database storage
         //12:12 PM  ->  1212
@@ -129,6 +121,14 @@ public class Routine implements Comparable<Routine> {
             return -1;
         else
             return startTime.getTimeAsInt();
+    }
+
+    public String getStartTimeAsString() {
+        //For displaying in ManageRoutines
+        if (startTime == null)
+            return "";
+        else
+            return startTime.toString12Hr();
     }
 
     public int getDateLastRunAsInt() {
@@ -206,14 +206,6 @@ public class Routine implements Comparable<Routine> {
         this.startTime = startTime;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
     public List<Task> getTasks() {
         return tasks;
     }
@@ -236,11 +228,6 @@ public class Routine implements Comparable<Routine> {
 
     public void setLastRun(Date lastRun) {
         this.lastRun = lastRun;
-    }
-
-    @Override
-    public int compareTo(@NonNull Routine o) {
-        return priority - o.getPriority();
     }
 
     public static class Task implements Parcelable {

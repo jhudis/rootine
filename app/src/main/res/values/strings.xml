@@ -46,4 +46,6 @@
     <string name="delete_routine_dialogue_title">Delete Routine</string>
     <string name="delete_routine_dialogue_message">Do you really want to delete this routine?</string>
     <string name="user_name_hint">(Who will be completing routines?)</string>
+    <string name="run_routine_instruction">Click on a routine\nbelow to run it!</string>
+    <string name="no_runnable_routines">You don\'t have any\nroutines set to run today.\nClick \"Manage Routines\" below\nto add more routines!</string>
 </resources>

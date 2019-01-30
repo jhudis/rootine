@@ -8,9 +8,14 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
-public class Home extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class Home extends AppCompatActivity implements RunnableRoutineFragment.OnListFragmentInteractionListener {
+
+    private ArrayList<Routine> routines = new ArrayList<>();
+    private RoutinesDbAdapter mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,21 +34,21 @@ public class Home extends AppCompatActivity {
 
         mDbHelper = new RoutinesDbAdapter(this);
         mDbHelper.open();
-        Routine nextRunnableRoutine = mDbHelper.getNextRunnableRoutine();
+
+        routines.clear();
+        routines.addAll(mDbHelper.getRunnableRoutines());
+
         mDbHelper.close();
-        Button runRoutineButton = findViewById(R.id.run_routine_button);
-        if (nextRunnableRoutine == null) {
-            runRoutineButton.setEnabled(false);
-            return;
-        }
-        nextRunnableRoutineId = nextRunnableRoutine.getId();
-        String buttonText = "Run \"" + nextRunnableRoutine.getName() + "\"";
-        runRoutineButton.setText(buttonText);
+
+        if (routines.size() == 0)
+            findViewById(R.id.routine_list).setVisibility(View.GONE);
+        else
+            findViewById(R.id.no_runnable_routines).setVisibility(View.GONE);
     }
 
-    private RoutinesDbAdapter mDbHelper;
-
-    private int nextRunnableRoutineId;
+    public ArrayList<Routine> getRoutines() {
+        return routines;
+    }
 
     private void createNotificationChannel() {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -64,12 +69,10 @@ public class Home extends AppCompatActivity {
         startActivity(manageRoutines);
     }
 
-    public void runNextRoutine(View view) {
+    @Override
+    public void onListFragmentInteraction(Routine routine) {
         Intent runRoutine = new Intent(this, RoutineService.class);
-        runRoutine.putExtra(getString(R.string.routine_id_extra), nextRunnableRoutineId);
+        runRoutine.putExtra(getString(R.string.routine_id_extra), routine.getId());
         startService(runRoutine);
-
-        Intent refresh = new Intent(this, Home.class);
-        startActivity(refresh);
     }
 }

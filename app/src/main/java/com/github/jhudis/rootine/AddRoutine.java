@@ -70,8 +70,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
             return;
         }
 
-        EditText nameEditText = findViewById(R.id.name),
-                priorityEditText = findViewById(R.id.priority);
+        EditText nameEditText = findViewById(R.id.name);
         ToggleButton[] dayButtons = {findViewById(R.id.sunday), findViewById(R.id.monday),
                 findViewById(R.id.tuesday), findViewById(R.id.wednesday), findViewById(R.id.thursday),
                 findViewById(R.id.friday), findViewById(R.id.saturday)};
@@ -82,7 +81,6 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
         nameEditText.setText(routine.getName());
         if (routine.getStartTime() != null)
             startTimeEditText.setText(routine.getStartTime().toString12Hr());
-        priorityEditText.setText(routine.getPriority()+"");
         for (int i = 0; i < 7; i++)
             dayButtons[i].setChecked(routine.getDaysActive()[i]);
         if (routine.getStartTime() != null) {
@@ -98,7 +96,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
 
     @Override
     protected void onNewIntent(Intent intent) {
-        //This method accounts for when a task is added, removed, or modified
+        //This method accounts for when a list_item is added, removed, or modified
         //(since doing the above does not create a new activity; the user goes back to the one they were using)
 
         int taskIndex = intent.getIntExtra(getString(R.string.task_id_extra), -2);
@@ -117,17 +115,12 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
 
     private void enableDisableTimeEditText(boolean checked) {
         EditText startTimeEditText = findViewById(R.id.start_time);
-        EditText priorityEditText = findViewById(R.id.priority);
         if (checked) {
             startTimeEditText.setEnabled(true);
             startTimeEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
-            priorityEditText.setEnabled(false);
-            priorityEditText.setInputType(InputType.TYPE_NULL);
         } else {
             startTimeEditText.setEnabled(false);
             startTimeEditText.setInputType(InputType.TYPE_NULL);
-            priorityEditText.setEnabled(true);
-            priorityEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
         }
     }
 
@@ -143,8 +136,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
 
     public void done(View view) {
         EditText nameEditText = findViewById(R.id.name),
-                startTimeEditText = findViewById(R.id.start_time),
-                priorityEditText = findViewById(R.id.priority);
+                startTimeEditText = findViewById(R.id.start_time);
         ToggleButton[] dayButtons = {findViewById(R.id.sunday), findViewById(R.id.monday),
                 findViewById(R.id.tuesday), findViewById(R.id.wednesday), findViewById(R.id.thursday),
                 findViewById(R.id.friday), findViewById(R.id.saturday)};
@@ -152,10 +144,6 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
 
         String name = nameEditText.getText().toString();
         if (name.equals("")) name = getString(R.string.untitled_routine);
-
-
-        String priorityString = priorityEditText.getText().toString();
-        int priority = priorityString.equals("") ? 0 : Integer.parseInt(priorityString);
 
         boolean[] daysActive = new boolean[7];
         for (int i = 0; i < 7; i++)
@@ -165,7 +153,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
         String timeString = startTimeEditText.getText().toString();
         Routine.Time startTime = isTimed ? new Routine.Time(timeString) : null;
 
-        Routine routine = new Routine(name, daysActive, startTime, priority, tasks);
+        Routine routine = new Routine(name, daysActive, startTime, tasks);
 
         if (routineId == -1) //We're making a new routine
             routineId = (int) mDbHelper.createRoutine(routine);
@@ -207,7 +195,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
 
     @Override
     public void onListFragmentInteraction(Routine.Task task) {
-        //This happens when you click on a task
+        //This happens when you click on a list_item
 
         int taskIndex = -1;
         for (int i = 0; i < tasks.size(); i++)
