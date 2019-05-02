@@ -40,7 +40,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
                 timePickerDialog = new TimePickerDialog(AddRoutine.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        am_pm[0] = hourOfDay >= 12 ? "AM" : "PM";
+                        am_pm[0] = hourOfDay >= 12 ? "PM" : "AM";
                         if (hourOfDay > 12) hourOfDay -= 12;
                         startTimeEditText.setText(hourOfDay + ":" + String.format("%02d", minute) + " " + am_pm[0]);
                     }
