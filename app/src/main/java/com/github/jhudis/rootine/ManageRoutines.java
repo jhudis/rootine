@@ -28,6 +28,7 @@ public class ManageRoutines extends AppCompatActivity implements RoutineFragment
 
     public void addRoutine(View view) {
         Intent addRoutine = new Intent(this, AddRoutine.class);
+        //-1: new routine, otherwise: editing existing routine
         addRoutine.putExtra(getString(R.string.routine_id_extra), -1);
         startActivity(addRoutine);
     }
@@ -39,7 +40,7 @@ public class ManageRoutines extends AppCompatActivity implements RoutineFragment
     @Override
     public void onListFragmentInteraction(Routine routine) {
         //This happens when you click on a routine
-
+        //For updating routines
         Intent updateRoutine = new Intent(this, AddRoutine.class);
         updateRoutine.putExtra(getString(R.string.routine_id_extra), routine.getId());
         startActivity(updateRoutine);

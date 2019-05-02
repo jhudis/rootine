@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class Home extends AppCompatActivity implements RunnableRoutineFragment.OnListFragmentInteractionListener {
 
     private ArrayList<Routine> routines = new ArrayList<>();
+    //Get routines from string database
     private RoutinesDbAdapter mDbHelper;
 
     @Override
@@ -35,6 +36,7 @@ public class Home extends AppCompatActivity implements RunnableRoutineFragment.O
         mDbHelper = new RoutinesDbAdapter(this);
         mDbHelper.open();
 
+        //Gets all routines from database and puts them in routine list
         routines.clear();
         routines.addAll(mDbHelper.getRunnableRoutines());
 
@@ -50,6 +52,7 @@ public class Home extends AppCompatActivity implements RunnableRoutineFragment.O
         return routines;
     }
 
+    //Notification channel allows notifications to be created
     private void createNotificationChannel() {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         if (notificationManager.getNotificationChannels().size() > 0)
@@ -72,6 +75,7 @@ public class Home extends AppCompatActivity implements RunnableRoutineFragment.O
     @Override
     public void onListFragmentInteraction(Routine routine) {
         Intent runRoutine = new Intent(this, RoutineService.class);
+        //Adds ID of routine to intent
         runRoutine.putExtra(getString(R.string.routine_id_extra), routine.getId());
         startService(runRoutine);
     }

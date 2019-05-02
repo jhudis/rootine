@@ -24,6 +24,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
 
     private RoutinesDbAdapter mDbHelper;
 
+    //Cool clock graffix
     private TimePickerDialog timePickerDialog;
 
     @Override
@@ -58,6 +59,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
         mDbHelper.open();
 
         Intent intent = getIntent();
+        //Gets extra, -2 if there isn't one
         routineId = intent.getIntExtra(getString(R.string.routine_id_extra), -2);
 
         //This means we're making a new routine
@@ -102,17 +104,18 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
         int taskIndex = intent.getIntExtra(getString(R.string.task_id_extra), -2);
         Routine.Task task = intent.getParcelableExtra(getString(R.string.task_extra));
 
-        if (taskIndex == -2) {
+        if (taskIndex == -2) { //No index received, back button pressed
             return;
-        } else if (taskIndex == -1) {
+        } else if (taskIndex == -1) { //Adding new task
             tasks.add(task);
-        } else if (task == null) {
+        } else if (task == null) { //Removing task
             tasks.remove(taskIndex);
-        } else {
+        } else {                    //Updating task
             tasks.set(taskIndex, task);
         }
     }
 
+    //If routine is timed
     private void enableDisableTimeEditText(boolean checked) {
         EditText startTimeEditText = findViewById(R.id.start_time);
         if (checked) {
@@ -129,11 +132,13 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
         enableDisableTimeEditText(checked);
     }
 
+    //Basically addRoutine
     public void addTask(View view) {
         Intent addTask = new Intent(this, AddTask.class);
         startActivity(addTask);
     }
 
+    //When done button pressed: extracts data from input areas and places it in database as a routine
     public void done(View view) {
         EditText nameEditText = findViewById(R.id.name),
                 startTimeEditText = findViewById(R.id.start_time);
@@ -197,6 +202,7 @@ public class AddRoutine extends AppCompatActivity implements TaskFragment.OnList
     public void onListFragmentInteraction(Routine.Task task) {
         //This happens when you click on a list_item
 
+        //This is for updating tasks
         int taskIndex = -1;
         for (int i = 0; i < tasks.size(); i++)
             if (tasks.get(i) == task)
